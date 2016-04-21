@@ -52,6 +52,25 @@ public class BPlusTreeNode {
 		this.nodeNum = 0;
 		this.nodePosn = nodePosn;
 	}
+	//Over All insertion method  - always return root
+	public BPlusTreeNode overAllInsert(IntNode obj){
+		BPlusTreeNode res = this;
+		BPlusTreeNode temp = null;
+		//if this node is leaf - insert directly
+		if(this.elements != null){
+			res = this.insert(obj);
+		}
+		//if this node is non - leaf
+		else{
+			temp = this.search(obj);
+			temp = temp.insert(obj);
+			//compare reference
+			if(temp!=res){
+				res = temp;
+			}
+		}
+		return res;
+	}
 	public BPlusTreeNode insert(IntNode obj){
 		//The return that need to return
 		BPlusTreeNode res = null;
@@ -171,6 +190,7 @@ public class BPlusTreeNode {
 		int toBeInserted = obj.getSearchKey();
 		//Using loop instead of recursion to write a BSearch
 		//If empty, insert directy
+//		System.out.println(this.elements[0]);
 		if(this.elements[0] == null){
 			// this.elements[0] = obj;
 			res = 0;
@@ -432,7 +452,7 @@ public class BPlusTreeNode {
 		}
 		return rs;
 	}
-	
+
 	public boolean contains(int searchKey){
 		//contains is checking if the node contains the search key
 		for(int i=0;i<this.elements.length;i++){
@@ -440,32 +460,32 @@ public class BPlusTreeNode {
 				return true;
 			}
 		}
-		
+
 		return false;
 	}
-	
+
 	//remove elements in array
 	public void removeElements(Object[] myArray,int pos){
 		System.arraycopy(myArray, pos+1, myArray, pos, myArray.length-1-pos);
 	}
 	//remove node
 	public void removeKey(int searchkey){
-		
+
 		for(int i = 0; i < elements.length;i++ ){
 			if(elements[i].getSearchKey() == searchkey){
 				removeElements(elements,i);
 			}
 		}
 	}
-	
+
 	public void insertFront(IntNode[] myNode,IntNode node){
 		for(int i = myNode.length-1;i>0;i--){
 			myNode[i] = myNode[i-1];
 		}
 		myNode[0] = node;
 	}
-	
-	//insert elemet into first null position of array
+
+	// insert elemet into first null position of array
 	public void insertArray(IntNode[] myNode,IntNode node){
 		for(int i = 0;i<myNode.length;i++){
 			if(myNode[i]==null){
@@ -474,21 +494,21 @@ public class BPlusTreeNode {
 			}
 		}
 	}
-	
+
 
 
 	public void delete(int searchKey,BPlusTreeNode tree){
 //		BPlusTreeNode res = null;
 //		res = this.parents;
-		
+
 		//if this is leaf node
 		if(this.nextlevels == null){
-			
-			//if not contains search key,just return 
+
+			//if not contains search key,just return
 			if(!contains(searchKey)){
 				return;
 			}
-			
+
 			//if it's leaf node and also root node, just delete
 			if(this.getParents() == null){
 				removeKey(searchKey);
@@ -508,7 +528,7 @@ public class BPlusTreeNode {
 //						current = this.prev.getElements()[pos-1];//get the borrow intNode;
 //						//insert the borrow node to the current node.
 //						this.insert(current);
-						
+
 						//get the last element from the previous node,insert it into elements,
 						//then delete it from previous node after borrow);
 						IntNode temp = null;
@@ -520,10 +540,10 @@ public class BPlusTreeNode {
 								break;
 							}
 						}
-						
+
 						//change the parent node index value
 						parents.indexs[prev.nodePosn] = elements[0].getSearchKey();
-						
+
 						//then delete the key
 						removeKey(searchKey);
 					}//if current node's nodenum < order and its next node's nodenum> order,
@@ -542,21 +562,21 @@ public class BPlusTreeNode {
 //						this.insert(current);
 						//then delete the key
 						removeKey(searchKey);
-						
+
 						//change the parent node index value
 						parents.indexs[nodePosn] = next.getElements()[0].getSearchKey();
 					}//or we need to merge the node
 					else{
-						//two case: 
+						//two case:
 						//
 						//
-						
-						//case1:merge with the previous node 
+
+						//case1:merge with the previous node
 						if(this.prev != null
 						   &&this.prev.getElements().length <= order
 						   &&this.prev.getParents() == this.parents){
-							//need insert front there 
-							
+							//need insert front there
+
 							for(int i =0;i<this.prev.getElements().length;i++){
 								insert(this.prev.getElements()[i]);
 							}
@@ -569,8 +589,8 @@ public class BPlusTreeNode {
 									removeElements(parents.getNextlevels(),j);
 								}
 							}
-							
-							//update the connection 
+
+							//update the connection
 							if(prev.getPrev()!=null){
 								BPlusTreeNode temp = prev;
 								temp.getPrev().setNext(this);
@@ -578,9 +598,9 @@ public class BPlusTreeNode {
 								temp.setNext(null);
 								temp.setPrev(null);
 							}else{
-								
+
 							}
-						}//case2:merge with the next node 
+						}//case2:merge with the next node
 						else if(next!=null
 								&&next.getElements().length<=order
 								&&next.getParents() == parents){
@@ -593,8 +613,8 @@ public class BPlusTreeNode {
 									removeElements(parents.getNextlevels(),k);
 								}
 							}
-							
-							//update the connection 
+
+							//update the connection
 							if(next.getNext()!=null){
 								BPlusTreeNode temp = next;
 								temp.getNext().setPrev(this);
@@ -607,12 +627,12 @@ public class BPlusTreeNode {
 							}
 						}
 					}
-					
-				
-						
+
+
+
 				}
 			}
-			
+
 		}//if not leaf node
 		else{
 			//if the searchKey < the most left key of the node, search the first child node
@@ -630,11 +650,35 @@ public class BPlusTreeNode {
 				}
 			}
 		}
-		
-		
+
+
 	}
-	public BPlusTreeNode search(int searchKey){
-		return null;
+	public BPlusTreeNode search(IntNode searchKey){
+		BPlusTreeNode result = null;
+		//check this node is leaf or non - leaf
+		//non - leaf
+		if(this.elements == null){
+			//linear search
+			int res = -1;
+			int i = 0;
+			//FOr the case that goes to first element
+			if(this.indexs[0]>searchKey.getSearchKey()){
+				res = 0;
+			}
+			//for the case between first element and last element
+			while(i<2*this.order){
+				if(this.indexs[i]!= 0 && this.indexs[i]<=searchKey.getSearchKey()){
+					res = i+1;
+				}
+				i++;
+			}
+//			System.out.println(res+"   "+this.getNextlevels()[res]+"  "+this.getIndexs()[res]);
+			result = this.getNextlevels()[res].search(searchKey);
+		}
+		else{
+			result = this;
+		}
+		return result;
 	}
 	public BPlusTreeNode getPrev() {
 		return prev;
