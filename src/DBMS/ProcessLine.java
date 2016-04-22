@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 import BPlusTreeNode.BPlusTreeNode;
+import BPlusTreeNode.IntNode;
 
 class ProcessLine {
 	Scanner in;
@@ -63,12 +64,22 @@ class ProcessLine {
 
 	private void insert(String[] words) {
 		// TODO Auto-generated method stub
+		String[] tableNames = getNames(words);
+		int key = getSearchKey(words);
+		String[] values = getInsertValues(words);
 		
+		BPlusTreeNode bpt = getTrees(tableNames)[0];
+		
+		IntNode element = new IntNode(key,values);
+		
+		bpt.overAllInsert(element);
 	}
 
 	private ArrayList<BPlusTreeNode> search(String[] words) {
 		// TODO Auto-generated method stub
-		BPlusTreeNode[] bpts = getTrees(words);
+		String[] tableNames = getNames(words);
+		
+		BPlusTreeNode[] bpts = getTrees(tableNames);
 		int[] key = getKey(words);
 		ArrayList<BPlusTreeNode> result = new ArrayList<BPlusTreeNode>();
 		
@@ -95,8 +106,7 @@ class ProcessLine {
 	
 	//=====================helping methods=======================
 	//find out trees that assigned by the command
-	private BPlusTreeNode[] getTrees(String[] words){
-		
+	private BPlusTreeNode[] getTrees(String[] names){
 		
 	}
 	
