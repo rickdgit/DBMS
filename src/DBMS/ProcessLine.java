@@ -59,6 +59,11 @@ class ProcessLine {
 
 	private void createTable(String[] words) {
 		// TODO Auto-generated method stub
+		String[] tableNames = getNames(words);
+		BPlusTreeNode newBpt = new BPlusTreeNode(DBMS.getOrder());
+		
+		DBMS.orderIncrease();
+		
 		
 	}
 
